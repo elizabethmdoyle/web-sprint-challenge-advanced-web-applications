@@ -5,6 +5,9 @@ import {render} from '@testing-library/react';
 
 import Spinner from "./Spinner"
 
+//spinner works when logging in, when clicking submit upon adding a new article,
+// or submit when editing an existing article, and when submitting for deletion
+
 test('sanity', () => {
   render(<Spinner />)
 })
