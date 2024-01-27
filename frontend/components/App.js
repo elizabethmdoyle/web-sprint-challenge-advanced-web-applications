@@ -34,10 +34,9 @@ export default function App() {
     // and a message saying "Goodbye!" should be set in its proper state.
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
-     //axios.get(``)
-    //     .then(res {
-      //          console.log(res)
-   // })   .catch (err => { console.log(err, err.response)})
+ //do i not need a axios request as there is no logout endpoint?.....????? 
+
+    
   }
 
   const login = ({ username, password }) => {
@@ -52,7 +51,8 @@ export default function App() {
     setSpinnerOn(true);
      axiosWithAuth.post(`/login`, {username, password})
         .then(res => {
-               console.log(res)
+               
+            
       })   
         .catch (err => { 
           console.log(err, err.response)
@@ -86,9 +86,11 @@ export default function App() {
     //     .then(res {
       //          console.log(res)
    // })   .catch (err => { console.log(err, err.response)})
+
   }
 
   const updateArticle = ({ article_id, article }) => {
+    //for the edit/update button in the article elemenent
     // ✨ implement
     // You got this!
      //axios.put(``)
@@ -98,6 +100,7 @@ export default function App() {
   }
 
   const deleteArticle = article_id => {
+    //for the delete button inside the article element
     // ✨ implement
      //axios.delete(``)
     //     .then(res {
@@ -121,8 +124,8 @@ export default function App() {
           <Route path="/" element={<LoginForm login={login} />} />
           <Route path="articles" element={
             <>
-              <ArticleForm setArticles={setArticles} setCurrentArticleId={setCurrentArticleId} />
-              <Articles articles={articles}/>
+              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId} setArticles={setArticles}/>
+              <Articles setArticles={setArticles} getArticles={getArticles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} updateArticle={updateArticle}/>
             </>
           } />
         </Routes>
