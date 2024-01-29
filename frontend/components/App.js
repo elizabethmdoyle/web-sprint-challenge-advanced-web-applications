@@ -6,7 +6,9 @@ import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner' 
 
-import axiosWithAuth from '../axios/index';
+// import axiosWithAuth from '../axios/index';
+
+import axios from 'axios';
 
 const articlesUrl = 'http://localhost:9000/api/articles'
 const loginUrl = 'http://localhost:9000/api/login'
@@ -30,13 +32,14 @@ export default function App() {
 
   const logout = () => {
     // ✨ implement
-    // If a token is in local storage it should be removed,
+    // If a token is in local storage it should be removed,    
+        localStorage.removeItem('token');
     // and a message saying "Goodbye!" should be set in its proper state.
+        setMessage('Goodbye');
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
- //do i not need a axios request as there is no logout endpoint?.....????? 
+       redirectToLogin();
 
-    
   }
 
   const login = ({ username, password }) => {
@@ -47,11 +50,12 @@ export default function App() {
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
 
-    setMessage('');
-    setSpinnerOn(true);
-     axiosWithAuth.post(`/login`, {username, password})
+     setMessage('');
+     setSpinnerOn(true);
+     axios.post(`/api/login`, {username, password})
         .then(res => {
-               
+               console.log(res)
+              // redirectToArticles();
             
       })   
         .catch (err => { 
@@ -59,22 +63,27 @@ export default function App() {
       })
 
 
-   setSpinnerOn(false);
   }
 
   const getArticles = () => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
+    // setMessage('');
+    // setSpinnerOn(true);
     // and launch an authenticated request to the proper endpoint.
+
+      axios.get(`/api/articles`)
+            .then(res => {
+                  console.log(res)
+      })   .catch (err => { console.log(err, err.response)})
+
     // On success, we should set the articles in their proper state and
     // put the server success message in its proper state.
     // If something goes wrong, check the status of the response:
     // if it's a 401 the token might have gone bad, and we should redirect to login.
     // Don't forget to turn off the spinner!
-     //axios.get(``)
-    //     .then(res {
-      //          console.log(res)
-   // })   .catch (err => { console.log(err, err.response)})
+    
+  
   }
 
   const postArticle = article => {
@@ -111,8 +120,8 @@ export default function App() {
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner setSpinnerOn={setSpinnerOn} />
-      <Message setMessage={setMessage}/>
+      <Spinner spinnerOn={spinnerOn} />
+      <Message message={message}/>
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
         <h1>Advanced Web Applications</h1>
