@@ -23,7 +23,7 @@ export default function App() {
   // ✨ Research `useNavigate` in React Router v.6
   const navigate = useNavigate()
   const redirectToLogin = () => { /* ✨ implement */ 
-        navigate('/login');
+        navigate('/');
 }
   const redirectToArticles = () => { /* ✨ implement */ 
         navigate('/articles');
@@ -75,21 +75,28 @@ export default function App() {
   const getArticles = () => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
-    // setMessage('');
-    // setSpinnerOn(true);
+          setMessage('');
+          setSpinnerOn(true);
     // and launch an authenticated request to the proper endpoint.
-
-      axios.get(`/api/articles`)
-            .then(res => {
-                  console.log(res)
-      })   .catch (err => { console.log(err, err.response)})
 
     // On success, we should set the articles in their proper state and
     // put the server success message in its proper state.
-    // If something goes wrong, check the status of the response:
+      axiosWithAuth().get(articlesUrl)
+            .then(res => {
+                  console.log(`article res`, res)
+                  setArticles(res.data.articles)
+                  setMessage(res.data.message)
+
+      })     // If something goes wrong, check the status of the response:
     // if it's a 401 the token might have gone bad, and we should redirect to login.
-    // Don't forget to turn off the spinner!
-    
+    // Don't forget to turn off the spinner! 
+            .catch (err => {
+                  console.log(err, err.response)
+                  redirectToLogin();
+                  })
+            .finally(() => {
+                    setSpinnerOn(false)
+                  })
   
   }
 
@@ -98,30 +105,55 @@ export default function App() {
     // The flow is very similar to the `getArticles` function.
     // You'll know what to do! Use log statements or breakpoints
     // to inspect the response from the server.
-    //axios.post(``)
-    //     .then(res {
-      //          console.log(res)
-   // })   .catch (err => { console.log(err, err.response)})
 
+    setSpinnerOn(true)
+    setMessage('')
+    axiosWithAuth().post(articlesUrl, article)
+      .then(res => {
+        setArticles(articles => articles.concat(res.data.article)
+        )
+        setMessage(res.data.message)
+      })
+      .catch(err => {
+        console.log(err)  
+      })
+      .finally(() =>
+        setSpinnerOn(false)
+      )
   }
+
+
+
 
   const updateArticle = ({ article_id, article }) => {
     //for the edit/update button in the article elemenent
     // ✨ implement
-    // You got this!
-     //axios.put(``)
-    //     .then(res {
-      //          console.log(res)
-   // })   .catch (err => { console.log(err, err.response)})
+    // You got this
+    axiosWithAuth().put(articlesUrl+ '/' + article_id, article)
+    .then(res => {
+      console.log(res)
+      setArticles(articles.map(art => article_id != art.article_id ?  art : article ))
+      setMessage(res.data.message)
+    })
+    .catch(err => console.log(err))
   }
 
   const deleteArticle = article_id => {
     //for the delete button inside the article element
     // ✨ implement
-     //axios.delete(``)
-    //     .then(res {
-      //          console.log(res)
-   // })   .catch (err => { console.log(err, err.response)})
+    setSpinnerOn(true)
+    setMessage('')
+    axiosWithAuth().delete(`http://localhost:9000/api/articles/${article_id}`)
+    .then(res => {
+      console.log(res)
+    setArticles(articles.filter(art => article_id != art.article_id))
+    setMessage(res.data.message)
+    })
+    .catch(err => {
+      console.log(err)
+      setMessage(err.message)
+    })
+    .finally(() => setSpinnerOn(false))
   }
 
   return (
@@ -151,10 +183,10 @@ export default function App() {
               />
               <Articles 
               articles={articles}
+              currentArticleId={currentArticleId}
               getArticles={getArticles} 
               deleteArticle={deleteArticle} 
               setCurrentArticleId={setCurrentArticleId} 
-              updateArticle={updateArticle}
               redirectToLogin={redirectToLogin}
                />
             </>
