@@ -47,22 +47,28 @@ export default function App() {
   const login = ({ username, password }) => {
     // ✨ implement
     // We should flush the message state, turn on the spinner
+    setMessage('');
+    setSpinnerOn(true);
     // and launch a request to the proper endpoint.
     // On success, we should set the token to local storage in a 'token' key,
     // put the server success message in its proper state, and redirect
     // to the Articles screen. Don't forget to turn off the spinner!
 
-     setMessage('');
-     setSpinnerOn(true);
-     axios.post(`/api/login`, {username, password})
-        .then(res => {
-               console.log(res)
-                          
-      })   
-        .catch (err => { 
-          console.log(err, err.response)
-      })
-
+     axios.post(loginUrl, {username: username, password: password})
+            .then(res => {
+                  console.log(res)
+                  localStorage.setItem('token', res.data)
+                  setMessage(res.data.message)
+                  redirectToArticles()
+                              
+          })   
+            .catch (err => { 
+              console.log(err, err.response)
+              setMessage(err.message)
+          })
+            .finally(() => {
+              setSpinnerOn(false)
+            })
 
   }
 
@@ -121,7 +127,7 @@ export default function App() {
   return (
     // ✨ fix the JSX: `Spinner`, `Message`, `LoginForm`, `ArticleForm` and `Articles` expect props ❗
     <>
-      <Spinner spinnerOn={spinnerOn} />
+      <Spinner on={spinnerOn} />
       <Message message={message}/>
       <button id="logout" onClick={logout}>Logout from app</button>
       <div id="wrapper" style={{ opacity: spinnerOn ? "0.25" : "1" }}> {/* <-- do not change this line */}
