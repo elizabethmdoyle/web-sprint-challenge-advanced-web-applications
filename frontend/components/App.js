@@ -6,7 +6,7 @@ import Message from './Message'
 import ArticleForm from './ArticleForm'
 import Spinner from './Spinner' 
 
-// import axiosWithAuth from '../axios/index';
+import axiosWithAuth from '../axios/index';
 
 import axios from 'axios';
 
@@ -32,12 +32,14 @@ export default function App() {
 
   const logout = () => {
     // ✨ implement
-    // If a token is in local storage it should be removed,    
+    // If a token is in local storage it should be removed,
+    if(localStorage.getItem('token')) {    
         localStorage.removeItem('token');
     // and a message saying "Goodbye!" should be set in its proper state.
         setMessage('Goodbye');
     // In any case, we should redirect the browser back to the login screen,
     // using the helper above.
+    }
        redirectToLogin();
 
   }
@@ -55,8 +57,7 @@ export default function App() {
      axios.post(`/api/login`, {username, password})
         .then(res => {
                console.log(res)
-              // redirectToArticles();
-            
+                          
       })   
         .catch (err => { 
           console.log(err, err.response)
@@ -130,11 +131,26 @@ export default function App() {
           <NavLink id="articlesScreen" to="/articles">Articles</NavLink>
         </nav>
         <Routes>
-          <Route path="/" element={<LoginForm login={login} />} />
+          <Route path="/" element={<LoginForm login={login} logout={logout}/>} />
           <Route path="articles" element={
             <>
-              <ArticleForm postArticle={postArticle} updateArticle={updateArticle} setCurrentArticleId={setCurrentArticleId} setArticles={setArticles}/>
-              <Articles setArticles={setArticles} getArticles={getArticles} deleteArticle={deleteArticle} setCurrentArticleId={setCurrentArticleId} updateArticle={updateArticle}/>
+              <ArticleForm 
+              articles={articles}
+              getArticles={getArticles}
+              postArticle={postArticle} 
+              updateArticle={updateArticle} 
+              setCurrentArticleId={setCurrentArticleId} 
+              currentArticleId={currentArticleId}
+              
+              />
+              <Articles 
+              articles={articles}
+              getArticles={getArticles} 
+              deleteArticle={deleteArticle} 
+              setCurrentArticleId={setCurrentArticleId} 
+              updateArticle={updateArticle}
+              redirectToLogin={redirectToLogin}
+               />
             </>
           } />
         </Routes>
